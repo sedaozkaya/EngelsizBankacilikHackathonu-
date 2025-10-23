@@ -90,7 +90,7 @@ const DashboardScreen = ({ navigation }) => {
             <Text style={styles.quickActionText}>Hareketler</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.quickAction}>
+          <TouchableOpacity style={styles.quickAction} onPress={() => navigation.navigate('SendMoney')}>
             <View style={styles.quickActionIcon}>
               <Ionicons name="cash-outline" size={28} color="#A91F5B" />
             </View>
@@ -118,31 +118,37 @@ const DashboardScreen = ({ navigation }) => {
           <Ionicons name="chevron-forward" size={20} color="#A91F5B" />
         </TouchableOpacity>
 
-        {/* VOV ve Yatırım Kartları */}
-        <View style={styles.cardsSection}>
-          <TouchableOpacity style={styles.infoCard}>
-            <View style={styles.infoCardContent}>
-              <Ionicons name="rocket-outline" size={24} color="#A91F5B" />
-              <Text style={styles.infoCardText}>VOV Ek Faiz Dünyası</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#A91F5B" />
-          </TouchableOpacity>
+        {/* Yeni Shortcut (Kısayol) Menüsü */}
+        <View style={styles.shortcutSection}>
+          <View style={styles.shortcutScrollContent}>
+            <TouchableOpacity style={styles.shortcutCard}>
+              <View style={styles.shortcutIconContainer}>
+                <Ionicons name="briefcase-outline" size={24} color="#A91F5B" />
+              </View>
+              <Text style={styles.shortcutText}>Hesaplar</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.infoCard}>
-            <View style={styles.infoCardContent}>
-              <Ionicons name="trending-up-outline" size={24} color="#A91F5B" />
-              <Text style={styles.infoCardText}>Yatırım Fonu Al / Sat</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#A91F5B" />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.shortcutCard}>
+              <View style={styles.shortcutIconContainer}>
+                <Ionicons name="card-outline" size={24} color="#A91F5B" />
+              </View>
+              <Text style={styles.shortcutText}>Ödemeler</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.infoCard}>
-            <View style={styles.infoCardContent}>
-              <Ionicons name="person-outline" size={24} color="#A91F5B" />
-              <Text style={styles.infoCardText}>Danışmanım İletişime Geç</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#A91F5B" />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.shortcutCard}>
+              <View style={styles.shortcutIconContainer}>
+                <Ionicons name="trending-up-outline" size={24} color="#A91F5B" />
+              </View>
+              <Text style={styles.shortcutText}>Yatırım Fonu{'\n'}Al / Sat</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.shortcutCard}>
+              <View style={styles.shortcutIconContainer}>
+                <Ionicons name="cash-outline" size={24} color="#A91F5B" />
+              </View>
+              <Text style={styles.shortcutText}>Krediler</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Reklam Banner */}
@@ -182,12 +188,12 @@ const DashboardScreen = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('SendMoney')}>
           <Ionicons name="paper-plane-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>PARA GÖNDER</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Basvurular')}>
           <Ionicons name="document-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>BAŞVURULAR</Text>
         </TouchableOpacity>
@@ -366,34 +372,39 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 
-  // Info Kartlar Styles
-  cardsSection: {
+  // Shortcut (Kısayol) Menüsü Styles
+  shortcutSection: {
+    marginBottom: 20,
     paddingHorizontal: 15,
   },
-  infoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  shortcutScrollContent: {
+    paddingRight: 0,
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  infoCardContent: {
     flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
   },
-  infoCardText: {
-    fontSize: 14,
-    color: '#333',
-    marginLeft: 12,
+  shortcutCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    marginRight: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  shortcutIconContainer: {
+    marginBottom: 6,
+  },
+  shortcutText: {
+    fontSize: 11,
+    color: '#333',
+    textAlign: 'center',
+    lineHeight: 14,
   },
 
   // Reklam Banner Styles

@@ -181,7 +181,7 @@ const BasvurularScreen = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('SendMoney')}>
           <Ionicons name="paper-plane-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>PARA GÖNDER</Text>
         </TouchableOpacity>
