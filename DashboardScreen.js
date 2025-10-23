@@ -187,7 +187,7 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.tabItemText}>PARA GÖNDER</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Basvurular')}>
           <Ionicons name="document-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>BAŞVURULAR</Text>
         </TouchableOpacity>
