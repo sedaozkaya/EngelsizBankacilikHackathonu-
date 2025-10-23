@@ -171,7 +171,7 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={[styles.tabItemText, styles.activeTabItem]}>ANA SAYFA</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Odemeler')}>
           <Ionicons name="card-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>ÖDEMELER</Text>
         </TouchableOpacity>
