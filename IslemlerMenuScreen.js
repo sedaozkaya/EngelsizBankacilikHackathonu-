@@ -29,8 +29,21 @@ const IslemlerMenuScreen = ({ navigation }) => {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleMenuItemPress = (item) => {
+    if (item.name === 'Ödemeler') {
+      navigation.navigate('Odemeler');
+    } else {
+      console.log('Menü öğesi seçildi:', item.name);
+      // Diğer menü öğeleri için ilgili ekranlara yönlendirme yapılabilir
+    }
+  };
+
   const renderMenuItem = ({ item }) => (
-    <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+    <TouchableOpacity 
+      style={styles.menuItem} 
+      activeOpacity={0.7}
+      onPress={() => handleMenuItemPress(item)}
+    >
       <View style={styles.iconContainer}>
         <Icon name={item.icon} size={24} color="#FFFFFF" />
       </View>
