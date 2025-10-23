@@ -176,7 +176,7 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.tabItemText}>ÖDEMELER</Text>
         </TouchableOpacity>
 
-                <TouchableOpacity style={styles.tabItemCenter} onPress={() => navigation.navigate('IslemlerMenu')}>
+                <TouchableOpacity style={styles.tabItemCenter} onPress={() => navigation.navigate('IslemlerMenu')} accessibilityLabel="Menü">
           <View style={styles.centerIconCircle}>
             <Ionicons name="menu-outline" size={28} color="#FFFFFF" />
           </View>
@@ -187,7 +187,7 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.tabItemText}>PARA GÖNDER</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Basvurular')}>
+        <TouchableOpacity style={styles.tabItem}>
           <Ionicons name="document-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>BAŞVURULAR</Text>
         </TouchableOpacity>
