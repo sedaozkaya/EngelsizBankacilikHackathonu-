@@ -64,6 +64,35 @@ const OdemelerScreen = ({ navigation }) => {
         {/* Alt Boşluk */}
         <View style={styles.bottomSpacer} />
       </ScrollView>
+
+      {/* Bottom Tab Bar */}
+      <View style={styles.bottomTabBar}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Dashboard')}>
+          <Ionicons name="home-outline" size={24} color="#666" />
+          <Text style={styles.tabItemText}>ANA SAYFA</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tabItem}>
+          <Ionicons name="card" size={24} color="#A91F5B" />
+          <Text style={[styles.tabItemText, styles.activeTabItem]}>ÖDEMELER</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tabItemCenter} onPress={() => navigation.navigate('IslemlerMenu')}>
+          <View style={styles.centerIconCircle}>
+            <Ionicons name="menu-outline" size={28} color="#FFFFFF" />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tabItem}>
+          <Ionicons name="paper-plane-outline" size={24} color="#666" />
+          <Text style={styles.tabItemText}>PARA GÖNDER</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tabItem}>
+          <Ionicons name="document-outline" size={24} color="#666" />
+          <Text style={styles.tabItemText}>BAŞVURULAR</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -104,6 +133,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     paddingHorizontal: 20,
     paddingTop: 8,
+    paddingBottom: 100,
   },
   menuItem: {
     paddingVertical: 16,
@@ -117,6 +147,49 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 40,
+  },
+  bottomTabBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    borderTopWidth: 1,
+    borderTopColor: '#EEEEEE',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  tabItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    paddingVertical: 5,
+  },
+  tabItemCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  centerIconCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#A91F5B',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabItemText: {
+    fontSize: 9,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  activeTabItem: {
+    color: '#A91F5B',
+    fontWeight: '600',
   },
 });
 
