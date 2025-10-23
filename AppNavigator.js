@@ -6,6 +6,7 @@ import DashboardScreen from './DashboardScreen';
 import IslemlerMenuScreen from './IslemlerMenuScreen';
 import OdemelerScreen from './OdemelerScreen';
 import BasvurularScreen from './BasvurularScreen';
+import YatirimHesabiScreen from './YatirimHesabiScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ export default function AppNavigator() {
         <Stack.Screen name="IslemlerMenu" component={IslemlerMenuScreen} />
         <Stack.Screen name="Odemeler" component={OdemelerScreen} />
         <Stack.Screen name="Basvurular" component={BasvurularScreen} />
+        <Stack.Screen name="YatirimHesabi" component={YatirimHesabiScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

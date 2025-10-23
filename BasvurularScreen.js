@@ -67,8 +67,12 @@ const BasvurularScreen = ({ navigation }) => {
   ];
 
   const handleItemPress = (item) => {
-    console.log('Başvuru seçildi:', item.title);
-    // Burada ilgili başvuru detay sayfasına yönlendirme yapılabilir
+    if (item.title === 'Yatırım Hesabı Açılışı') {
+      navigation.navigate('YatirimHesabi');
+    } else {
+      console.log('Başvuru seçildi:', item.title);
+      // Diğer başvurular için ilgili sayfaya yönlendirme yapılabilir
+    }
   };
 
   return (
