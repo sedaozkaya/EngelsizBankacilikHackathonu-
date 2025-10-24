@@ -29,20 +29,20 @@ const AIDynamicButtons = ({ selectedUser, onActionPress }) => {
     if (isInvestor) {
       return {
         actions: [
-          { id: 'act-1', title: 'Hisse Al/Sat', subtitle: 'Piyasa emirleri', icon: 'trending-up-outline' },
-          { id: 'act-2', title: 'Fon İşlemleri', subtitle: 'Alım / Satım', icon: 'pie-chart-outline' },
-          { id: 'act-3', title: 'Piyasa Özeti', subtitle: 'Günlük görünüm', icon: 'newspaper-outline' },
-          { id: 'act-4', title: 'Risk Profili', subtitle: 'Güncelle', icon: 'shield-checkmark-outline' },
+          { id: 'act-1', title: 'Hisse Al/Sat', icon: 'trending-up-outline' },
+          { id: 'act-2', title: 'Fon İşlemleri', icon: 'pie-chart-outline' },
+          { id: 'act-3', title: 'Piyasa Özeti', icon: 'newspaper-outline' },
+          { id: 'act-4', title: 'Risk Profili', icon: 'shield-checkmark-outline' },
         ],
         aiRationale: `${userDetails.Meslek} olarak çalışan kullanıcımızın son işlemlerinde yatırım ağırlıklı. Yatırım araçlarına yönelik kısayollar önerildi.`,
       };
     }
     return {
       actions: [
-        { id: 'act-1', title: 'Fatura Öde', subtitle: 'Elektrik / Su / GSM', icon: 'receipt-outline' },
-        { id: 'act-2', title: 'Para Gönder', subtitle: 'IBAN / Kolay Adres', icon: 'send-outline' },
-        { id: 'act-3', title: 'Kira Ödemesi', subtitle: 'Aylık', icon: 'home-outline' },
-        { id: 'act-4', title: 'Kredi Ödemesi', subtitle: 'Taksit takibi', icon: 'cash-outline' },
+        { id: 'act-1', title: 'Fatura Öde', icon: 'receipt-outline' },
+        { id: 'act-2', title: 'Para Gönder', icon: 'send-outline' },
+        { id: 'act-3', title: 'Kira Ödemesi', icon: 'home-outline' },
+        { id: 'act-4', title: 'Kredi Ödemesi', icon: 'cash-outline' },
       ],
       aiRationale: `${userDetails.Meslek} olarak çalışan kullanıcımızın düzenli ödeme işlemleri odaklı. Fatura ve kredi ödeme kısayolları önerildi.`,
     };
@@ -73,7 +73,7 @@ Kullanıcı Detayları:
 Lütfen aşağıdaki JSON formatında 4 eylem ve bir gerekçe (aiRationale) döndür:
 {
   "actions": [
-    {"id": "act-1", "title": "Eylem Başlık", "subtitle": "Alt başlık", "icon": "ionicons-ismi"},
+    {"id": "act-1", "title": "Eylem Başlık", "icon": "ionicons-ismi"},
     ...
   ],
   "aiRationale": "Kullanıcının işlem geçmişine göre açıklama metni"
@@ -184,11 +184,6 @@ Lütfen aşağıdaki JSON formatında 4 eylem ve bir gerekçe (aiRationale) dön
       <Text style={styles.actionCardTitle} numberOfLines={2}>
         {action.title}
       </Text>
-      {action.subtitle ? (
-        <Text style={styles.actionCardSubtitle} numberOfLines={1}>
-          {action.subtitle}
-        </Text>
-      ) : null}
     </TouchableOpacity>
   );
 
