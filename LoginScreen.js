@@ -9,10 +9,12 @@ import {
   StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const handleLogin = () => {
     // Giriş yap butonuna tıklandığında Dashboard'a yönlendir
@@ -105,7 +107,12 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       {/* Bottom Tab Bar */}
-      <View style={styles.bottomTabBar}>
+      <View
+        style={{
+          ...styles.bottomTabBar,
+          paddingBottom: insets.bottom, // Dynamically adjust padding
+        }}
+      >
         <TouchableOpacity style={styles.tabItem}>
           <Ionicons name="flash-outline" size={24} color="#666" />
           <Text style={styles.tabText}>FAST{'\n'}İŞLEMLERİ</Text>
@@ -318,15 +325,19 @@ const styles = StyleSheet.create({
 
   // Bottom Tab Bar Styles
   bottomTabBar: {
-    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: '#FFFFFF',
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
+    flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginTop: 'auto',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   tabItem: {
     alignItems: 'center',

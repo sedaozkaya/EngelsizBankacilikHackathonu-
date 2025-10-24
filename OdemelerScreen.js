@@ -8,8 +8,11 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const OdemelerScreen = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
+
   const odemeMenuItems = [
     'Fatura Ödeme',
     'Fatura Ödeme Talimatları',
@@ -66,7 +69,12 @@ const OdemelerScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* Bottom Tab Bar */}
-      <View style={styles.bottomTabBar}>
+      <View
+        style={{
+          ...styles.bottomTabBar,
+          paddingBottom: insets.bottom, // Dynamically adjust padding
+        }}
+      >
         <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Dashboard')}>
           <Ionicons name="home-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>ANA SAYFA</Text>
@@ -153,14 +161,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
+    flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   tabItem: {
     alignItems: 'center',
