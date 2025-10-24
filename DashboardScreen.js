@@ -83,43 +83,7 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.vovAvailable}>Kullanılabilir Bakiye 879.994,64 TL</Text>
         </View>
 
-        {/* Hızlı İşlem İkonları */}
-        <View style={styles.quickActionsContainer}>
-          <TouchableOpacity style={styles.quickAction}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="list-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>Hareketler</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.quickAction} onPress={() => navigation.navigate('SendMoney')}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="cash-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>Para Gönder</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.quickAction}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="document-text-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>Fatura Öde</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.quickAction}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="share-social-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>IBAN Paylaş</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Tüm Hesaplar Link */}
-        <TouchableOpacity style={styles.allAccountsLink}>
-          <Text style={styles.allAccountsText}>Tüm Hesaplar</Text>
-          <Ionicons name="chevron-forward" size={20} color="#A91F5B" />
-        </TouchableOpacity>
-
+        
         {/* AI Dinamik Kısayollar */}
         <AIDynamicButtons
           onActionPress={(action) => {
@@ -134,38 +98,7 @@ const DashboardScreen = ({ navigation }) => {
           }}
         />
 
-        {/* Yeni Shortcut (Kısayol) Menüsü */}
-        <View style={styles.shortcutSection}>
-          <View style={styles.shortcutScrollContent}>
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="briefcase-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Hesaplar</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="card-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Ödemeler</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="trending-up-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Yatırım Fonu{'\n'}Al / Sat</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="cash-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Krediler</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {/* Kaldırıldı: Sabit Kısayol Menüsü */}
 
         {/* Reklam Banner */}
         <View style={styles.adBanner}>

@@ -97,14 +97,14 @@ const AIDynamicButtons = ({ onActionPress }) => {
         data = getMockData(mockProfile);
       }
 
-      // Expecting data.actions as array
-      setActions(Array.isArray(data?.actions) ? data.actions : []);
+      // Expecting data.actions as array; limit to first 4
+      setActions(Array.isArray(data?.actions) ? data.actions.slice(0, 4) : []);
       setAiRationale(typeof data?.aiRationale === 'string' ? data.aiRationale : '');
       setLoading(false);
     } catch (e) {
       // On API failure: show fallback actions and specific rationale message
       const fallback = getMockData(mockProfile);
-      setActions(fallback.actions);
+      setActions(fallback.actions.slice(0, 4));
       setAiRationale('API bağlantısı başarısız oldu, varsayılan öneriler gösteriliyor.');
       setError(e?.message || 'Beklenmeyen bir hata oluştu');
       setLoading(false);
@@ -156,24 +156,6 @@ const AIDynamicButtons = ({ onActionPress }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Profile Selector */}
-      <View style={styles.profileRow}>
-        {['Ödeme Odaklı', 'Yatırımcı'].map((p) => {
-          const active = mockProfile === p;
-          return (
-            <TouchableOpacity
-              key={p}
-              style={[styles.profileChip, active && styles.profileChipActive]}
-              onPress={() => setMockProfile(p)}
-              activeOpacity={0.9}
-            >
-              <Text style={[styles.profileChipText, active && styles.profileChipTextActive]}>
-                {p}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
 
       {/* Loading / Error */}
       {error ? (
@@ -183,7 +165,7 @@ const AIDynamicButtons = ({ onActionPress }) => {
         </View>
       ) : null}
 
-      {/* Actions - Grid (no ScrollView) */}
+      {/* Actions - 2x2 Grid (no ScrollView) */}
       {loading && actions.length === 0 ? (
         <View style={styles.loadingRow}>
           <ActivityIndicator size="small" color="#A91F5B" />
@@ -239,21 +221,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  profileRow: { flexDirection: 'row', marginBottom: 8 },
-  profileChip: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 16,
-    backgroundColor: '#F3F4F6',
-    marginRight: 8,
-  },
-  profileChipActive: {
-    backgroundColor: '#FBE8F0',
-    borderWidth: 1,
-    borderColor: '#A91F5B',
-  },
-  profileChipText: { color: '#374151', fontSize: 12, fontWeight: '600' },
-  profileChipTextActive: { color: '#A91F5B' },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -275,7 +242,7 @@ const styles = StyleSheet.create({
   loadingText: { marginLeft: 10, color: '#6B7280', fontSize: 12 },
   emptyText: { color: '#6B7280', fontSize: 12 },
   actionCard: {
-    width: '32%',
+    width: '48%',
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingVertical: 12,
