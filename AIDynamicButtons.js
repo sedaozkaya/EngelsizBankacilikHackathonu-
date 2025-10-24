@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,54 +7,34 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { ACTIONS_API_URL } from '@env';
+import { OPENAI_API_KEY, OPENAI_API_ENDPOINT, OPENAI_API_VERSION, OPENAI_DEPLOYMENT_NAME } from '@env';
 
 // AI Dynamic Buttons component
 // Contract
-// - Inputs: none (uses internal mockProfile state)
-// - Behavior: Prepares lastFiveTransactions based on mockProfile and fetches suggested actions from API (or mock fallback)
-// - Output UI: Title, profile selection chips, dynamic action buttons; loading and error states
+// - Inputs: selectedUser (object with id, name, initials, details)
+// - Behavior: Uses selectedUser details to build AI prompt and fetch actions
+// - Output UI: Title, 2x2 grid of dynamic action buttons, AI rationale panel
 
-const AIDynamicButtons = ({ onActionPress }) => {
-  const [mockProfile, setMockProfile] = useState('Ödeme Odaklı'); // or 'Yatırımcı'
+const AIDynamicButtons = ({ selectedUser, onActionPress }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [actions, setActions] = useState([]);
   const [aiRationale, setAiRationale] = useState('');
 
-  // Prepare last five transactions as example text per profile
-  const lastFiveTransactions = useMemo(() => {
-    if (mockProfile === 'Yatırımcı') {
-      return [
-        'Borsa: ABC Hisse Alımı - 2.500 TL',
-        'Fon: ABC B Tipi Fon Katılma - 1.000 TL',
-        'Borsa: XYZ Hisse Satışı - 3.200 TL',
-        'Eurobond Kupon Ödemesi - 450 TL',
-        'Fon: DEF Esnek Fon Alımı - 750 TL',
-      ];
-    }
-    // Ödeme Odaklı
-    return [
-      'Elektrik faturası - 350 TL',
-      'Su faturası - 120 TL',
-      'Mobil hat ödemesi - 245 TL',
-      'Kira EFT - 12.500 TL',
-      'Market alışverişi - 980 TL',
-    ];
-  }, [mockProfile]);
-
-  const getMockData = (profile) => {
-    if (profile === 'Yatırımcı') {
+  const getMockData = (userDetails) => {
+    // Determine profile from transaction history
+    const transactions = userDetails.Son30Islem || '';
+    const isInvestor = transactions.toLowerCase().includes('yatırım') || transactions.toLowerCase().includes('fon');
+    
+    if (isInvestor) {
       return {
         actions: [
           { id: 'act-1', title: 'Hisse Al/Sat', subtitle: 'Piyasa emirleri', icon: 'trending-up-outline' },
           { id: 'act-2', title: 'Fon İşlemleri', subtitle: 'Alım / Satım', icon: 'pie-chart-outline' },
           { id: 'act-3', title: 'Piyasa Özeti', subtitle: 'Günlük görünüm', icon: 'newspaper-outline' },
           { id: 'act-4', title: 'Risk Profili', subtitle: 'Güncelle', icon: 'shield-checkmark-outline' },
-          { id: 'act-5', title: 'Piyasa Alarmı', subtitle: 'Fiyat uyarı', icon: 'notifications-outline' },
         ],
-        aiRationale:
-          'Son işlemleriniz ağırlıklı olarak sermaye piyasası ürünlerinde. Günlük piyasa özeti ve fon/hisse kısayolları yatırım davranışınızı desteklemek için önerildi.',
+        aiRationale: `${userDetails.Meslek} olarak çalışan kullanıcımızın son işlemlerinde yatırım ağırlıklı. Yatırım araçlarına yönelik kısayollar önerildi.`,
       };
     }
     return {
@@ -62,48 +42,100 @@ const AIDynamicButtons = ({ onActionPress }) => {
         { id: 'act-1', title: 'Fatura Öde', subtitle: 'Elektrik / Su / GSM', icon: 'receipt-outline' },
         { id: 'act-2', title: 'Para Gönder', subtitle: 'IBAN / Kolay Adres', icon: 'send-outline' },
         { id: 'act-3', title: 'Kira Ödemesi', subtitle: 'Aylık', icon: 'home-outline' },
-        { id: 'act-4', title: 'Otomatik Ödeme', subtitle: 'Talimat oluştur', icon: 'calendar-outline' },
-        { id: 'act-5', title: 'Hızlı IBAN Paylaş', subtitle: 'Kolay paylaş', icon: 'share-social-outline' },
+        { id: 'act-4', title: 'Kredi Ödemesi', subtitle: 'Taksit takibi', icon: 'cash-outline' },
       ],
-      aiRationale:
-        'Son beş işleminiz düzenli ödemelere odaklı. Fatura, para transferi ve otomatik talimat kısayolları ödeme rutinlerinizi hızlandırmak için önerildi.',
+      aiRationale: `${userDetails.Meslek} olarak çalışan kullanıcımızın düzenli ödeme işlemleri odaklı. Fatura ve kredi ödeme kısayolları önerildi.`,
     };
   };
 
   const handleFetchActions = async () => {
+    if (!selectedUser || !selectedUser.details) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    
     try {
-      const payload = {
-        profile: mockProfile,
-        lastFiveTransactions,
-      };
+      const userDetails = selectedUser.details;
+      const now = new Date();
+      const timeInfo = `Saat: ${now.getHours()}:${now.getMinutes()}, Gün: ${now.toLocaleDateString('tr-TR', { weekday: 'long' })}`;
 
-  let data;
+      const gptPrompt = `Sen bir bankacılık asistanısınız. Aşağıdaki kullanıcı bilgilerine göre 4 adet dinamik kısayol öner (JSON formatında).
 
-      if (ACTIONS_API_URL && typeof ACTIONS_API_URL === 'string' && ACTIONS_API_URL.length > 0) {
-        const res = await fetch(ACTIONS_API_URL, {
+Kullanıcı Detayları:
+- Meslek: ${userDetails.Meslek}
+- Ev Sahibi: ${userDetails.EvSahibi}
+- Kredi Kullanmış: ${userDetails.KrediKullanmış}
+- Son 30 İşlem: ${userDetails.Son30Islem}
+- Zaman Bilgisi: ${timeInfo}
+
+Lütfen aşağıdaki JSON formatında 4 eylem ve bir gerekçe (aiRationale) döndür:
+{
+  "actions": [
+    {"id": "act-1", "title": "Eylem Başlık", "subtitle": "Alt başlık", "icon": "ionicons-ismi"},
+    ...
+  ],
+  "aiRationale": "Kullanıcının işlem geçmişine göre açıklama metni"
+}`;
+
+      let data;
+
+      const deploymentName = OPENAI_DEPLOYMENT_NAME || 'contrat-summarizer';
+      const baseEndpoint = OPENAI_API_ENDPOINT?.endsWith('/')
+        ? OPENAI_API_ENDPOINT.slice(0, -1)
+        : OPENAI_API_ENDPOINT;
+
+      if (baseEndpoint && OPENAI_API_KEY) {
+        const apiUrl = `${baseEndpoint}/openai/deployments/${deploymentName}/chat/completions?api-version=${OPENAI_API_VERSION}`;
+
+        const res = await fetch(apiUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          headers: {
+            'Content-Type': 'application/json',
+            'api-key': OPENAI_API_KEY,
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: 'Sen bir bankacılık uzmanısın ve kullanıcılara kişiselleştirilmiş öneriler sunuyorsun.' },
+              { role: 'user', content: gptPrompt },
+            ],
+            max_tokens: 800,
+            temperature: 0.7,
+          }),
         });
+
         if (!res.ok) {
           throw new Error(`API error ${res.status}`);
         }
-        data = await res.json();
+
+        const apiData = await res.json();
+        let content = apiData.choices[0]?.message?.content || '{}';
+        
+        // Clean the content from markdown code blocks and extra characters
+        content = content.trim();
+        // Remove markdown code blocks if present
+        if (content.startsWith('```json')) {
+          content = content.replace(/^```json\s*\n?/, '').replace(/\n?```\s*$/, '');
+        } else if (content.startsWith('```')) {
+          content = content.replace(/^```\s*\n?/, '').replace(/\n?```\s*$/, '');
+        }
+        content = content.trim();
+        
+        data = JSON.parse(content);
       } else {
-        // Mock fallback: create suggested actions based on profile
+        // Mock fallback
         await new Promise((r) => setTimeout(r, 600));
-        data = getMockData(mockProfile);
+        data = getMockData(userDetails);
       }
 
-      // Expecting data.actions as array; limit to first 4
+      // Limit to first 4
       setActions(Array.isArray(data?.actions) ? data.actions.slice(0, 4) : []);
       setAiRationale(typeof data?.aiRationale === 'string' ? data.aiRationale : '');
       setLoading(false);
     } catch (e) {
-      // On API failure: show fallback actions and specific rationale message
-      const fallback = getMockData(mockProfile);
+      // On API failure: show fallback actions
+      const fallback = getMockData(selectedUser.details);
       setActions(fallback.actions.slice(0, 4));
       setAiRationale('API bağlantısı başarısız oldu, varsayılan öneriler gösteriliyor.');
       setError(e?.message || 'Beklenmeyen bir hata oluştu');
@@ -114,7 +146,7 @@ const AIDynamicButtons = ({ onActionPress }) => {
   useEffect(() => {
     handleFetchActions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mockProfile]);
+  }, [selectedUser]);
 
   const renderActionCard = (action) => (
     <TouchableOpacity
