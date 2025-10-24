@@ -7,28 +7,21 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AIDynamicButtons from './AIDynamicButtons';
+import UserSelectModal from './UserSelectModal';
+import CUSTOMER_DATA from './usersData';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-
-// Kullanıcı verileri - harici 'veriler' objesinden çekilmiş ilk 3 kullanıcı
-const users = [
-  { id: 1, initials: 'AY', name: 'Ahmet Yılmaz', default: true },
-  { id: 2, initials: 'EK', name: 'Elif Kaya', default: false },
-  { id: 3, initials: 'MÖ', name: 'Mehmet Öztürk', default: false },
-];
 
 const DashboardScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Hesaplar');
-  const [selectedUser, setSelectedUser] = useState(users.find(u => u.default) || users[0]);
+  const [selectedUser, setSelectedUser] = useState(CUSTOMER_DATA[0]);
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const handleUserChange = (user) => {
+  const handleUserSelect = (user) => {
     setSelectedUser(user);
-    setIsUserMenuVisible(false);
   };
 
   return (
@@ -57,54 +50,12 @@ const DashboardScreen = ({ navigation }) => {
         </View>
 
         {/* Kullanıcı Değiştirme Modal */}
-        <Modal
+        <UserSelectModal
           visible={isUserMenuVisible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setIsUserMenuVisible(false)}
-        >
-          <TouchableOpacity 
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setIsUserMenuVisible(false)}
-          >
-            <View style={styles.userMenuContainer}>
-              <View style={styles.userMenuHeader}>
-                <Text style={styles.userMenuTitle}>Kullanıcı Seç</Text>
-                <TouchableOpacity onPress={() => setIsUserMenuVisible(false)}>
-                  <Ionicons name="close" size={24} color="#333" />
-                </TouchableOpacity>
-              </View>
-              
-              {users.map((user) => (
-                <TouchableOpacity
-                  key={user.id}
-                  style={styles.userMenuItem}
-                  onPress={() => handleUserChange(user)}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.userMenuItemLeft}>
-                    <View style={[
-                      styles.userMenuCircle,
-                      selectedUser.id === user.id && styles.userMenuCircleActive
-                    ]}>
-                      <Text style={[
-                        styles.userMenuInitials,
-                        selectedUser.id === user.id && styles.userMenuInitialsActive
-                      ]}>
-                        {user.initials}
-                      </Text>
-                    </View>
-                    <Text style={styles.userMenuName}>{user.name}</Text>
-                  </View>
-                  {selectedUser.id === user.id && (
-                    <Ionicons name="checkmark" size={24} color="#A91F5B" />
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
-          </TouchableOpacity>
-        </Modal>
+          onClose={() => setIsUserMenuVisible(false)}
+          onUserSelect={handleUserSelect}
+          users={CUSTOMER_DATA}
+        />
 
         {/* Sekmeler */}
         <View style={styles.tabsContainer}>
@@ -152,45 +103,10 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.vovAvailable}>Kullanılabilir Bakiye 879.994,64 TL</Text>
         </View>
 
-        {/* Hızlı İşlem İkonları */}
-        <View style={styles.quickActionsContainer}>
-          <TouchableOpacity style={styles.quickAction}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="list-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>Hareketler</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.quickAction} onPress={() => navigation.navigate('SendMoney')}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="cash-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>Para Gönder</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.quickAction}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="document-text-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>Fatura Öde</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.quickAction}>
-            <View style={styles.quickActionIcon}>
-              <Ionicons name="share-social-outline" size={28} color="#A91F5B" />
-            </View>
-            <Text style={styles.quickActionText}>IBAN Paylaş</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Tüm Hesaplar Link */}
-        <TouchableOpacity style={styles.allAccountsLink}>
-          <Text style={styles.allAccountsText}>Tüm Hesaplar</Text>
-          <Ionicons name="chevron-forward" size={20} color="#A91F5B" />
-        </TouchableOpacity>
-
+        
         {/* AI Dinamik Kısayollar */}
         <AIDynamicButtons
+          selectedUser={selectedUser}
           onActionPress={(action) => {
             // Basit yönlendirme örnekleri
             if (action.title?.includes('Para Gönder')) {
@@ -203,38 +119,7 @@ const DashboardScreen = ({ navigation }) => {
           }}
         />
 
-        {/* Yeni Shortcut (Kısayol) Menüsü */}
-        <View style={styles.shortcutSection}>
-          <View style={styles.shortcutScrollContent}>
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="briefcase-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Hesaplar</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="card-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Ödemeler</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="trending-up-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Yatırım Fonu{'\n'}Al / Sat</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shortcutCard}>
-              <View style={styles.shortcutIconContainer}>
-                <Ionicons name="cash-outline" size={24} color="#A91F5B" />
-              </View>
-              <Text style={styles.shortcutText}>Krediler</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {/* Kaldırıldı: Sabit Kısayol Menüsü */}
 
         {/* Reklam Banner */}
         <View style={styles.adBanner}>
