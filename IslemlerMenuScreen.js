@@ -32,6 +32,8 @@ const IslemlerMenuScreen = ({ navigation }) => {
   const handleMenuItemPress = (item) => {
     if (item.name === 'Ödemeler') {
       navigation.navigate('Odemeler');
+    } else if (item.name === 'Para Gönder') {
+      navigation.navigate('SendMoney');
     } else {
       console.log('Menü öğesi seçildi:', item.name);
       // Diğer menü öğeleri için ilgili ekranlara yönlendirme yapılabilir
@@ -56,7 +58,7 @@ const IslemlerMenuScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#900C3F" />
+      <StatusBar barStyle="light-content" backgroundColor="#A91F5B" />
       
       <View style={styles.content}>
         {/* Arama Çubuğu */}
@@ -145,11 +147,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#900C3F',
+    backgroundColor: '#A91F5B',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
-    shadowColor: '#900C3F',
+    shadowColor: '#A91F5B',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#900C3F',
+    backgroundColor: '#A91F5B',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
