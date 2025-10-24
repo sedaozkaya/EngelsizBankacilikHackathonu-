@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AIDynamicButtons from './AIDynamicButtons';
@@ -96,6 +97,13 @@ const DashboardScreen = ({ navigation }) => {
             <View style={styles.vovLogo}>
               <Text style={styles.vovLogoText}>VOV</Text>
             </View>
+            <TouchableOpacity
+              style={styles.infoIcon}
+              accessibilityLabel="terim açıklaması videosuna yönlendir"
+              onPress={() => navigation.navigate('YouTubeModal', { url: 'https://www.youtube.com/watch?v=fRknYnzcoqg' })}
+            >
+              <Ionicons name="information-circle-outline" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
           </View>
           <Text style={styles.vovTitle}>VOV Hesap</Text>
           <Text style={styles.vovIban}>TR040012400000562217000001</Text>
@@ -347,6 +355,9 @@ const styles = StyleSheet.create({
   },
   vovHeader: {
     marginBottom: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   vovLogo: {
     width: 40,
@@ -381,6 +392,9 @@ const styles = StyleSheet.create({
   vovAvailable: {
     fontSize: 13,
     color: '#E0D0E8',
+  },
+  infoIcon: {
+    padding: 4,
   },
 
   // Hızlı İşlemler Styles

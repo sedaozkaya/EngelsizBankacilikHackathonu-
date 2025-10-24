@@ -16,37 +16,37 @@ const SendMoneyScreen = ({ navigation }) => {
     {
       id: '1',
       title: 'Kendi Hesaplarım Arası',
-      icon: 'swap-horizontal-outline',
+      icon: 'swap-horizontal',
       description: 'Hesaplarınız arasında para transferi',
     },
     {
       id: '2',
       title: 'Alternatif Bank Hesabına',
-      icon: 'business-outline',
+      icon: 'business',
       description: 'Alternatif Bank müşterilerine havale',
     },
     {
       id: '3',
       title: 'Başka Bankaya Havale',
-      icon: 'send-outline',
+      icon: 'send',
       description: 'IBAN ile diğer bankalara transfer',
     },
     {
       id: '4',
       title: 'QR Kod ile Para Gönder',
-      icon: 'qr-code-outline',
+      icon: 'qr-code',
       description: 'QR kod okutarak hızlı transfer',
     },
     {
       id: '5',
       title: 'Yurt Dışına Para Gönder',
-      icon: 'globe-outline',
+      icon: 'globe',
       description: 'Uluslararası para transferi',
     },
     {
       id: '6',
       title: 'Havale Talimatları',
-      icon: 'calendar-outline',
+      icon: 'calendar',
       description: 'Otomatik havale ayarları',
     },
   ];

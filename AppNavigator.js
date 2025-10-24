@@ -8,6 +8,7 @@ import OdemelerScreen from './OdemelerScreen';
 import BasvurularScreen from './BasvurularScreen';
 import YatirimHesabiScreen from './YatirimHesabiScreen';
 import SendMoneyScreen from './SendMoneyScreen';
+import YouTubeModal from './YouTubeModal';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Basvurular" component={BasvurularScreen} />
   <Stack.Screen name="YatirimHesabi" component={YatirimHesabiScreen} />
   <Stack.Screen name="SendMoney" component={SendMoneyScreen} />
+  <Stack.Screen name="YouTubeModal" component={YouTubeModal} />
       </Stack.Navigator>
     </NavigationContainer>
   );
