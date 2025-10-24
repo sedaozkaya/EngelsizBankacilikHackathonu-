@@ -122,7 +122,29 @@ Lütfen aşağıdaki JSON formatında 4 eylem ve bir gerekçe (aiRationale) dön
         }
         content = content.trim();
         
-        data = JSON.parse(content);
+        // Try to parse JSON from the model output. Be defensive: the model
+        // may return plain text or include surrounding markdown. Attempt a
+        // direct parse first, then try to extract a JSON substring.
+        let parsed = null;
+        try {
+          parsed = JSON.parse(content);
+        } catch (parseErr) {
+          // Try to extract the first JSON object in the text
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            try {
+              parsed = JSON.parse(jsonMatch[0]);
+            } catch (e2) {
+              parsed = null;
+            }
+          }
+        }
+
+        if (!parsed) {
+          throw new Error('Model yanıtı JSON formatında değil veya parse edilemedi');
+        }
+
+        data = parsed;
       } else {
         // Mock fallback
         await new Promise((r) => setTimeout(r, 600));
