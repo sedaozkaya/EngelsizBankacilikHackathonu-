@@ -39,9 +39,9 @@ const LoginScreen = ({ navigation }) => {
       {/* Profil Alanı */}
       <View style={styles.profileSection}>
         <View style={styles.profileCircle}>
-          <Text style={styles.profileInitials}>AÖ</Text>
+          <Text style={styles.profileInitials}>AY</Text>
         </View>
-        <Text style={styles.profileName}>AYŞE ÖZAĞAOĞLU</Text>
+        <Text style={styles.profileName}>AHMET YILDIZ</Text>
         <TouchableOpacity>
           <Text style={styles.forgetMeText}>Beni Unut</Text>
         </TouchableOpacity>
