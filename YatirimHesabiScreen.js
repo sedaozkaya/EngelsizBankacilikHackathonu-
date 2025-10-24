@@ -287,8 +287,24 @@ Müşteri, bu sözleşmeyi elektronik ortamda onaylamakla hükümlerini okuduğu
           style={[styles.acceptButton, !hasReadToEnd && styles.acceptButtonDisabled]}
           disabled={!hasReadToEnd}
           onPress={() => {
-            Alert.alert('Teşekkürler', 'Sözleşmeyi kabul ettiniz.');
-            navigation.goBack();
+            Alert.alert(
+              'Onayınızı Doğrulayın',
+              'Bu işlemi gerçekleştirmek istediğinizden emin misiniz?',
+              [
+                {
+                  text: 'Hayır',
+                  onPress: () => console.log('İşlem iptal edildi'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Evet',
+                  onPress: () => {
+                    Alert.alert('Teşekkürler', 'Sözleşmeyi kabul ettiniz.');
+                    navigation.goBack();
+                  },
+                },
+              ]
+            );
           }}
           activeOpacity={0.8}
         >
