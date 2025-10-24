@@ -8,16 +8,29 @@ import {
   Modal,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { OPENAI_API_KEY, OPENAI_API_ENDPOINT, OPENAI_API_VERSION, OPENAI_DEPLOYMENT_NAME } from '@env';
+import { Audio } from 'expo-av';
+import { 
+  OPENAI_API_KEY, 
+  OPENAI_API_ENDPOINT, 
+  OPENAI_API_VERSION, 
+  OPENAI_DEPLOYMENT_NAME,
+  AZURE_SPEECH_KEY,
+  AZURE_SPEECH_REGION 
+} from '@env';
 
 // Tam Ekran Modal Bileşeni
 const SozlesmeOzetModal = ({ visible, onClose }) => {
   const [loading, setLoading] = React.useState(true);
   const [bilgilendirmeMetni, setBilgilendirmeMetni] = React.useState('');
   const [error, setError] = React.useState(null);
+  const [ttsLoading, setTtsLoading] = React.useState(false);
+  const [ttsPlaying, setTtsPlaying] = React.useState(false);
+  const [ttsError, setTtsError] = React.useState(null);
+  const [sound, setSound] = React.useState(null);
 
   const normalizeInformativeText = (text = '') => {
     return text
@@ -33,6 +46,168 @@ const SozlesmeOzetModal = ({ visible, onClose }) => {
       fetchContractSummary();
     }
   }, [visible]);
+
+  const readContractSummary = async (textToRead) => {
+    // Eğer ses çalıyorsa, durdur (toggle davranışı)
+    if (ttsPlaying && sound) {
+      try {
+        console.log('⏸️ Ses durduruluyor...');
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        setSound(null);
+        setTtsPlaying(false);
+        return;
+      } catch (e) {
+        console.log('Ses durdurma hatası:', e);
+      }
+    }
+
+    if (!textToRead || textToRead.trim().length === 0) {
+      Alert.alert('Hata', 'Okunacak metin bulunamadı.');
+      return;
+    }
+
+    // Eğer önceki bir ses varsa temizle
+    if (sound) {
+      try {
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        setSound(null);
+      } catch (e) {
+        console.log('Ses durdurma hatası (göz ardı edildi):', e);
+      }
+    }
+
+    setTtsLoading(true);
+    setTtsError(null);
+    setTtsPlaying(false);
+
+    try {
+      // Audio modunu ayarla
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: false,
+        shouldDuckAndroid: true,
+      });
+
+      const region = AZURE_SPEECH_REGION || 'westeurope';
+      const apiKey = AZURE_SPEECH_KEY;
+
+      if (!apiKey) {
+        throw new Error('Azure Speech API anahtarı bulunamadı.');
+      }
+
+      const ttsUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
+
+      // SSML formatında Türkçe ses için body oluştur
+      const ssmlBody = `<speak version='1.0' xml:lang='tr-TR'>
+  <voice xml:lang='tr-TR' name='tr-TR-EmelNeural'>
+    ${textToRead}
+  </voice>
+</speak>`;
+
+      const response = await fetch(ttsUrl, {
+        method: 'POST',
+        headers: {
+          'Ocp-Apim-Subscription-Key': apiKey,
+          'Content-Type': 'application/ssml+xml',
+          'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
+        },
+        body: ssmlBody,
+      });
+
+      if (!response.ok) {
+        throw new Error(`TTS API hatası: ${response.status} ${response.statusText}`);
+      }
+
+      // Ses verisini blob olarak al
+      const audioBlob = await response.blob();
+      
+      console.log('✅ TTS API başarılı! Ses verisi alındı:', audioBlob.size, 'bytes');
+
+      // Blob'u base64'e çevir (React Native için)
+      const reader = new FileReader();
+      
+      reader.onloadend = async () => {
+        try {
+          const base64data = reader.result;
+          
+          // Ses dosyasını yükle ve çal
+          const { sound: newSound } = await Audio.Sound.createAsync(
+            { uri: base64data },
+            { shouldPlay: true, volume: 1.0 },
+            onPlaybackStatusUpdate
+          );
+
+          setSound(newSound);
+          setTtsPlaying(true);
+          setTtsLoading(false);
+
+          console.log('🔊 Ses çalınıyor...');
+        } catch (playError) {
+          console.error('❌ Ses oynatma hatası:', playError);
+          setTtsError('Ses çalınamadı: ' + playError.message);
+          setTtsLoading(false);
+          Alert.alert('Hata', 'Ses çalınırken bir hata oluştu.');
+        }
+      };
+
+      reader.onerror = () => {
+        console.error('❌ FileReader hatası');
+        setTtsError('Ses verisi işlenemedi.');
+        setTtsLoading(false);
+        Alert.alert('Hata', 'Ses verisi işlenirken bir hata oluştu.');
+      };
+
+      reader.readAsDataURL(audioBlob);
+      
+    } catch (err) {
+      console.error('❌ TTS Hatası:', err);
+      setTtsError(err.message || 'Ses oluşturma başarısız oldu.');
+      setTtsLoading(false);
+      Alert.alert('TTS Hatası', err.message || 'Ses oluşturulurken bir hata oluştu.');
+    }
+  };
+
+  // Ses oynatma durumu güncellemelerini dinle
+  const onPlaybackStatusUpdate = (status) => {
+    if (status.isLoaded) {
+      if (status.didJustFinish) {
+        console.log('✅ Ses oynatma tamamlandı');
+        setTtsPlaying(false);
+        // Ses tamamlandığında temizle
+        if (sound) {
+          sound.unloadAsync().then(() => setSound(null));
+        }
+      }
+    } else if (status.error) {
+      console.error('❌ Oynatma hatası:', status.error);
+      setTtsPlaying(false);
+      setTtsError('Oynatma sırasında hata oluştu.');
+    }
+  };
+
+  // Modal kapandığında sesi temizle
+  React.useEffect(() => {
+    return () => {
+      if (sound) {
+        console.log('🧹 Ses temizleniyor...');
+        sound.unloadAsync();
+      }
+    };
+  }, [sound]);
+
+  // Modal kapandığında sesi durdur
+  React.useEffect(() => {
+    if (!visible && sound) {
+      sound.stopAsync().then(() => {
+        sound.unloadAsync();
+        setSound(null);
+        setTtsPlaying(false);
+      });
+    }
+  }, [visible, sound]);
 
   const fetchContractSummary = async () => {
     setLoading(true);
@@ -61,7 +236,7 @@ const SozlesmeOzetModal = ({ visible, onClose }) => {
             {
               role: 'user',
               content:
-                "Bu yatırım hesabı sözleşmesinin ana maddelerini, risklerini ve avantajlarını analiz et. Cevabını basit, anlaşılır bir dille yaz ve kesinlikle bir orta uzunlukta paragraf olarak sun. Lütfen yalnızca düz metin olarak, markdown, madde işareti veya kod bloğu kullanma; sadece metin döndür.",
+                "Bu yatırım hesabı sözleşmesinin ana maddelerini, risklerini ve avantajlarını analiz et. Cevabını basit, anlaşılır bir dille yaz ve kesinlikle maksimum 8 satır uzunluğunda bir paragraf olarak sun. Lütfen yalnızca düz metin olarak, markdown, madde işareti veya kod bloğu kullanma; sadece metin döndür.",
             },
           ],
           max_tokens: 800,
@@ -129,7 +304,31 @@ Metnin son oluşturulma tarihi: ${new Date().toLocaleDateString('tr-TR')}.
             </View>
           </TouchableOpacity>
           <Text style={styles.modalTitle}>Bilgilendirici Metin</Text>
-          <View style={styles.headerSpacer} />
+          <TouchableOpacity
+            style={styles.speakerButton}
+            onPress={() => readContractSummary(bilgilendirmeMetni)}
+            disabled={loading || ttsLoading || !bilgilendirmeMetni}
+            activeOpacity={0.8}
+            accessibilityLabel={ttsPlaying ? "Sesi durdur" : "Metni sesli oku"}
+            accessibilityHint="Bilgilendirici metni sesli olarak okur veya durdurur"
+            accessibilityRole="button"
+          >
+            <View style={[
+              styles.speakerButtonCircle,
+              (loading || ttsLoading || !bilgilendirmeMetni) && styles.speakerButtonDisabled,
+              ttsPlaying && styles.speakerButtonPlaying
+            ]}>
+              {ttsLoading ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Ionicons 
+                  name={ttsPlaying ? "pause" : "volume-high-outline"} 
+                  size={24} 
+                  color="#FFFFFF" 
+                />
+              )}
+            </View>
+          </TouchableOpacity>
         </View>
 
         {loading ? (
@@ -414,7 +613,27 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   modalTitle: { fontSize: 18, fontWeight: '600', color: '#333333', flex: 1, textAlign: 'center' },
-  headerSpacer: { width: 44 },
+  speakerButton: { zIndex: 1 },
+  speakerButtonCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#4CAF50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  speakerButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+    opacity: 0.6,
+  },
+  speakerButtonPlaying: {
+    backgroundColor: '#FF9800',
+  },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 40 },
   loadingText: { fontSize: 16, fontWeight: '500', color: '#333333', marginTop: 20 },
   apiInfo: { fontSize: 13, color: '#999999', marginTop: 8 },
