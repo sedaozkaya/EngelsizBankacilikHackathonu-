@@ -42,6 +42,7 @@ const DashboardScreen = ({ navigation }) => {
             style={styles.profileContainer}
             onPress={() => setIsUserMenuVisible(true)}
             activeOpacity={0.7}
+            accessibilityLabel="Kullanıcı menüsünü aç"
           >
             <View style={styles.profileCircle}>
               <Text style={styles.profileText}>{selectedUser.initials}</Text>
@@ -63,6 +64,7 @@ const DashboardScreen = ({ navigation }) => {
           <TouchableOpacity 
             style={styles.tab}
             onPress={() => setActiveTab('Hesaplar')}
+            accessibilityLabel="Hesaplar sekmesini aç"
           >
             <Text style={[styles.tabText, activeTab === 'Hesaplar' && styles.activeTabText]}>
               Hesaplar
@@ -73,6 +75,7 @@ const DashboardScreen = ({ navigation }) => {
           <TouchableOpacity 
             style={styles.tab}
             onPress={() => setActiveTab('Kartlar')}
+            accessibilityLabel="Kartlar sekmesini aç"
           >
             <Text style={[styles.tabText, activeTab === 'Kartlar' && styles.activeTabText]}>
               Kartlar
@@ -83,6 +86,7 @@ const DashboardScreen = ({ navigation }) => {
           <TouchableOpacity 
             style={styles.tab}
             onPress={() => setActiveTab('Finansal Durum')}
+            accessibilityLabel="Finansal Durum sekmesini aç"
           >
             <Text style={[styles.tabText, activeTab === 'Finansal Durum' && styles.activeTabText]}>
               Finansal Durum
@@ -99,7 +103,7 @@ const DashboardScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity
               style={styles.infoIcon}
-              accessibilityLabel="terim açıklaması videosuna yönlendir"
+              accessibilityLabel="VOV hesap bilgisi için açıklama videosunu aç"
               onPress={() => navigation.navigate('YouTubeModal', { url: 'https://www.youtube.com/watch?v=fRknYnzcoqg' })}
             >
               <Ionicons name="information-circle-outline" size={24} color="#FFFFFF" />
@@ -155,28 +159,28 @@ const DashboardScreen = ({ navigation }) => {
           paddingBottom: insets.bottom, // Dynamically adjust padding
         }}
       >
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} accessibilityLabel="Ana sayfa sekmesi">
           <Ionicons name="home" size={24} color="#A91F5B" />
           <Text style={[styles.tabItemText, styles.activeTabItem]}>ANA SAYFA</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Odemeler')}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Odemeler')} accessibilityLabel="Ödemeler sekmesi">
           <Ionicons name="card-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>ÖDEMELER</Text>
         </TouchableOpacity>
 
-                <TouchableOpacity style={styles.tabItemCenter} onPress={() => navigation.navigate('IslemlerMenu')} accessibilityLabel="Menü">
+        <TouchableOpacity style={styles.tabItemCenter} onPress={() => navigation.navigate('IslemlerMenu')} accessibilityLabel="Menü sekmesi">
           <View style={styles.centerIconCircle}>
             <Ionicons name="menu-outline" size={28} color="#FFFFFF" />
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('SendMoney')}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('SendMoney')} accessibilityLabel="Para gönder sekmesi">
           <Ionicons name="paper-plane-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>PARA GÖNDER</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Basvurular')}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Basvurular')} accessibilityLabel="Başvurular sekmesi">
           <Ionicons name="document-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>BAŞVURULAR</Text>
         </TouchableOpacity>
