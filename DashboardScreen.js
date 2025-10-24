@@ -7,14 +7,29 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AIDynamicButtons from './AIDynamicButtons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Kullanıcı verileri - harici 'veriler' objesinden çekilmiş ilk 3 kullanıcı
+const users = [
+  { id: 1, initials: 'AY', name: 'Ahmet Yılmaz', default: true },
+  { id: 2, initials: 'EK', name: 'Elif Kaya', default: false },
+  { id: 3, initials: 'MÖ', name: 'Mehmet Öztürk', default: false },
+];
+
 const DashboardScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Hesaplar');
+  const [selectedUser, setSelectedUser] = useState(users.find(u => u.default) || users[0]);
+  const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
   const insets = useSafeAreaInsets();
+
+  const handleUserChange = (user) => {
+    setSelectedUser(user);
+    setIsUserMenuVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,13 +44,67 @@ const DashboardScreen = ({ navigation }) => {
             />
             <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
           </View>
-          <View style={styles.profileContainer}>
+          <TouchableOpacity 
+            style={styles.profileContainer}
+            onPress={() => setIsUserMenuVisible(true)}
+            activeOpacity={0.7}
+          >
             <View style={styles.profileCircle}>
-              <Text style={styles.profileText}>AÖ</Text>
+              <Text style={styles.profileText}>{selectedUser.initials}</Text>
             </View>
             <Ionicons name="chevron-down" size={16} color="#333" />
-          </View>
+          </TouchableOpacity>
         </View>
+
+        {/* Kullanıcı Değiştirme Modal */}
+        <Modal
+          visible={isUserMenuVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setIsUserMenuVisible(false)}
+        >
+          <TouchableOpacity 
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setIsUserMenuVisible(false)}
+          >
+            <View style={styles.userMenuContainer}>
+              <View style={styles.userMenuHeader}>
+                <Text style={styles.userMenuTitle}>Kullanıcı Seç</Text>
+                <TouchableOpacity onPress={() => setIsUserMenuVisible(false)}>
+                  <Ionicons name="close" size={24} color="#333" />
+                </TouchableOpacity>
+              </View>
+              
+              {users.map((user) => (
+                <TouchableOpacity
+                  key={user.id}
+                  style={styles.userMenuItem}
+                  onPress={() => handleUserChange(user)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.userMenuItemLeft}>
+                    <View style={[
+                      styles.userMenuCircle,
+                      selectedUser.id === user.id && styles.userMenuCircleActive
+                    ]}>
+                      <Text style={[
+                        styles.userMenuInitials,
+                        selectedUser.id === user.id && styles.userMenuInitialsActive
+                      ]}>
+                        {user.initials}
+                      </Text>
+                    </View>
+                    <Text style={styles.userMenuName}>{user.name}</Text>
+                  </View>
+                  {selectedUser.id === user.id && (
+                    <Ionicons name="checkmark" size={24} color="#A91F5B" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </TouchableOpacity>
+        </Modal>
 
         {/* Sekmeler */}
         <View style={styles.tabsContainer}>
@@ -192,6 +261,8 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 4,
+    paddingHorizontal: 4,
   },
   profileCircle: {
     width: 32,
@@ -206,6 +277,78 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+
+  // Kullanıcı Değiştirme Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-start',
+    paddingTop: 60,
+    paddingHorizontal: 15,
+  },
+  userMenuContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  userMenuHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  userMenuTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  userMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  userMenuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  userMenuCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  userMenuCircleActive: {
+    backgroundColor: '#A91F5B',
+  },
+  userMenuInitials: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#666',
+  },
+  userMenuInitialsActive: {
+    color: '#FFFFFF',
+  },
+  userMenuName: {
+    fontSize: 15,
+    color: '#333',
+    fontWeight: '500',
   },
 
   // Sekmeler Styles
