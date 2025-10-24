@@ -48,12 +48,26 @@ const SozlesmeOzetModal = ({ visible, onClose }) => {
   }, [visible]);
 
   const readContractSummary = async (textToRead) => {
+    // Eğer ses çalıyorsa, durdur (toggle davranışı)
+    if (ttsPlaying && sound) {
+      try {
+        console.log('⏸️ Ses durduruluyor...');
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        setSound(null);
+        setTtsPlaying(false);
+        return;
+      } catch (e) {
+        console.log('Ses durdurma hatası:', e);
+      }
+    }
+
     if (!textToRead || textToRead.trim().length === 0) {
       Alert.alert('Hata', 'Okunacak metin bulunamadı.');
       return;
     }
 
-    // Eğer zaten bir ses çalıyorsa, durdur ve temizle
+    // Eğer önceki bir ses varsa temizle
     if (sound) {
       try {
         await sound.stopAsync();
@@ -222,7 +236,7 @@ const SozlesmeOzetModal = ({ visible, onClose }) => {
             {
               role: 'user',
               content:
-                "Bu yatırım hesabı sözleşmesinin ana maddelerini, risklerini ve avantajlarını analiz et. Cevabını basit, anlaşılır bir dille yaz ve kesinlikle bir orta uzunlukta paragraf olarak sun. Lütfen yalnızca düz metin olarak, markdown, madde işareti veya kod bloğu kullanma; sadece metin döndür.",
+                "Bu yatırım hesabı sözleşmesinin ana maddelerini, risklerini ve avantajlarını analiz et. Cevabını basit, anlaşılır bir dille yaz ve kesinlikle maksimum 8 satır uzunluğunda bir paragraf olarak sun. Lütfen yalnızca düz metin olarak, markdown, madde işareti veya kod bloğu kullanma; sadece metin döndür.",
             },
           ],
           max_tokens: 800,
@@ -295,6 +309,9 @@ Metnin son oluşturulma tarihi: ${new Date().toLocaleDateString('tr-TR')}.
             onPress={() => readContractSummary(bilgilendirmeMetni)}
             disabled={loading || ttsLoading || !bilgilendirmeMetni}
             activeOpacity={0.8}
+            accessibilityLabel={ttsPlaying ? "Sesi durdur" : "Metni sesli oku"}
+            accessibilityHint="Bilgilendirici metni sesli olarak okur veya durdurur"
+            accessibilityRole="button"
           >
             <View style={[
               styles.speakerButtonCircle,
@@ -305,7 +322,7 @@ Metnin son oluşturulma tarihi: ${new Date().toLocaleDateString('tr-TR')}.
                 <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
                 <Ionicons 
-                  name={ttsPlaying ? "volume-high" : "volume-high-outline"} 
+                  name={ttsPlaying ? "pause" : "volume-high-outline"} 
                   size={24} 
                   color="#FFFFFF" 
                 />
