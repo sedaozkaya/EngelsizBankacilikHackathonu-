@@ -10,9 +10,11 @@ import {
   StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const IslemlerMenuScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const insets = useSafeAreaInsets();
 
   const menuItems = [
     { id: '1', name: 'Hesaplar', icon: 'briefcase' },
@@ -93,6 +95,16 @@ const IslemlerMenuScreen = ({ navigation }) => {
             <Icon name="close" size={32} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
+      </View>
+
+      {/* Bottom Tab Bar */}
+      <View
+        style={{
+          ...styles.bottomTabBar,
+          paddingBottom: insets.bottom, // Dynamically adjust padding
+        }}
+      >
+        {/* ...existing code... */}
       </View>
     </SafeAreaView>
   );
@@ -193,6 +205,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
+  },
+  bottomTabBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
 
