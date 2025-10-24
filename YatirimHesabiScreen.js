@@ -61,7 +61,7 @@ const SozlesmeOzetModal = ({ visible, onClose }) => {
             {
               role: 'user',
               content:
-                'Bu yatırım hesabı sözleşmesi hakkında, madde işareti ve markdown kullanmadan, düz yazı formatında bilgilendirici bir metin üret.',
+                "Bu yatırım hesabı sözleşmesinin ana maddelerini, risklerini ve avantajlarını analiz et. Cevabını basit, anlaşılır bir dille yaz ve kesinlikle bir orta uzunlukta paragraf olarak sun. Lütfen yalnızca düz metin olarak, markdown, madde işareti veya kod bloğu kullanma; sadece metin döndür.",
             },
           ],
           max_tokens: 800,
@@ -72,8 +72,18 @@ const SozlesmeOzetModal = ({ visible, onClose }) => {
       if (!response.ok) throw new Error('API hatası');
 
       const data = await response.json();
-      const infoText = data.choices[0]?.message?.content || 'Bilgilendirici metin oluşturulamadı.';
-      setBilgilendirmeMetni(normalizeInformativeText(infoText));
+      const raw = data.choices[0]?.message?.content || 'Bilgilendirici metin oluşturulamadı.';
+
+      // Temizleme: kod blokları, aşırı yeni satırlar ve formatlayıcı karakterleri kaldır
+      const cleaned = String(raw)
+        .replace(/```[\s\S]*?```/g, '') // remove fenced code blocks
+        .replace(/^[\s]*[*\-•#+>]+[\s]*/gm, '') // remove leading bullets/markers
+        .replace(/\*\*/g, '') // remove bold markers
+        .replace(/`/g, '') // remove backticks
+        .replace(/\n{3,}/g, '\n\n') // collapse excessive breaks
+        .trim();
+
+      setBilgilendirmeMetni(normalizeInformativeText(cleaned));
       setError(null);
       setLoading(false);
       
