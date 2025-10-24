@@ -4,13 +4,13 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Modal,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { OPENAI_API_KEY, OPENAI_API_ENDPOINT, OPENAI_API_VERSION, OPENAI_DEPLOYMENT_NAME } from '@env';
 
 // Tam Ekran Modal Bileşeni

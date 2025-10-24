@@ -5,12 +5,12 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AIDynamicButtons from './AIDynamicButtons';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DashboardScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Hesaplar');
@@ -119,6 +119,20 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.allAccountsText}>Tüm Hesaplar</Text>
           <Ionicons name="chevron-forward" size={20} color="#A91F5B" />
         </TouchableOpacity>
+
+        {/* AI Dinamik Kısayollar */}
+        <AIDynamicButtons
+          onActionPress={(action) => {
+            // Basit yönlendirme örnekleri
+            if (action.title?.includes('Para Gönder')) {
+              navigation.navigate('SendMoney');
+            } else if (action.title?.includes('Fatura')) {
+              navigation.navigate('Odemeler');
+            } else if (action.title?.includes('Fon') || action.title?.includes('Hisse')) {
+              navigation.navigate('Basvurular');
+            }
+          }}
+        />
 
         {/* Yeni Shortcut (Kısayol) Menüsü */}
         <View style={styles.shortcutSection}>
