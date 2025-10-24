@@ -16,37 +16,37 @@ const SendMoneyScreen = ({ navigation }) => {
     {
       id: '1',
       title: 'Kendi Hesaplarım Arası',
-      icon: 'swap-horizontal-outline',
+      icon: 'swap-horizontal',
       description: 'Hesaplarınız arasında para transferi',
     },
     {
       id: '2',
       title: 'Alternatif Bank Hesabına',
-      icon: 'business-outline',
+      icon: 'business',
       description: 'Alternatif Bank müşterilerine havale',
     },
     {
       id: '3',
       title: 'Başka Bankaya Havale',
-      icon: 'send-outline',
+      icon: 'send',
       description: 'IBAN ile diğer bankalara transfer',
     },
     {
       id: '4',
       title: 'QR Kod ile Para Gönder',
-      icon: 'qr-code-outline',
+      icon: 'qr-code',
       description: 'QR kod okutarak hızlı transfer',
     },
     {
       id: '5',
       title: 'Yurt Dışına Para Gönder',
-      icon: 'globe-outline',
+      icon: 'globe',
       description: 'Uluslararası para transferi',
     },
     {
       id: '6',
       title: 'Havale Talimatları',
-      icon: 'calendar-outline',
+      icon: 'calendar',
       description: 'Otomatik havale ayarları',
     },
   ];
@@ -64,6 +64,7 @@ const SendMoneyScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
+          accessibilityLabel="Geri git"
         >
           <Ionicons name="chevron-back" size={28} color="#333333" />
         </TouchableOpacity>
@@ -86,6 +87,7 @@ const SendMoneyScreen = ({ navigation }) => {
             ]}
             onPress={() => handleTransferOption(option)}
             activeOpacity={0.7}
+            accessibilityLabel={`${option.title} - ${option.description}`}
           >
             <View style={styles.optionIconContainer}>
               <Ionicons name={option.icon} size={28} color="#A91F5B" />
@@ -112,6 +114,7 @@ const SendMoneyScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.tabItem}
           onPress={() => navigation.navigate('Dashboard')}
+          accessibilityLabel="Ana sayfaya git"
         >
           <Ionicons name="home-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>ANA SAYFA</Text>
@@ -120,6 +123,7 @@ const SendMoneyScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.tabItem}
           onPress={() => navigation.navigate('Odemeler')}
+          accessibilityLabel="Ödemeler sayfasına git"
         >
           <Ionicons name="card-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>ÖDEMELER</Text>
@@ -128,13 +132,17 @@ const SendMoneyScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.tabItemCenter}
           onPress={() => navigation.navigate('IslemlerMenu')}
+          accessibilityLabel="İşlemler menüsünü aç"
         >
           <View style={styles.centerIconCircle}>
             <Ionicons name="menu-outline" size={28} color="#FFFFFF" />
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity
+          style={styles.tabItem}
+          accessibilityLabel="Para gönderme sayfasındasınız"
+        >
           <Ionicons name="paper-plane" size={24} color="#A91F5B" />
           <Text style={[styles.tabItemText, styles.activeTabItem]}>PARA GÖNDER</Text>
         </TouchableOpacity>
@@ -142,6 +150,7 @@ const SendMoneyScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.tabItem}
           onPress={() => navigation.navigate('Basvurular')}
+          accessibilityLabel="Başvurular sayfasına git"
         >
           <Ionicons name="document-outline" size={24} color="#666" />
           <Text style={styles.tabItemText}>BAŞVURULAR</Text>
